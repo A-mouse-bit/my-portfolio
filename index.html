@@ -129,7 +129,7 @@
           Contact Me
         </h2>
 
-        <form class="space-y-6">
+        <form class="space-y-6" action="https://formspree.io/f/mwlowgjw" method="POST">
           <input type="text" name="name" required maxlength="100" placeholder="Name" class="w-full px-4 py-3 rounded-xl bg-sky-900" />
           <input type="email" name="email" required maxlength="255" placeholder="Email" class="w-full px-4 py-3 rounded-xl bg-sky-900" />
           <textarea name="message" rows="5" maxlength="2000" placeholder="Message" class="w-full px-4 py-3 rounded-xl bg-sky-900"></textarea>
@@ -154,20 +154,17 @@
         contactButton.disabled = true;
 
         try {
-          const response = await fetch("/api/contact", {
+          const response = await fetch(contactForm.action, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: contactForm.name.value.trim(),
-              email: contactForm.email.value.trim(),
-              message: contactForm.message.value.trim(),
-            }),
+            body: new FormData(contactForm),
+            headers: { Accept: "application/json" },
           });
 
           const result = await response.json();
 
           if (!response.ok) {
-            contactStatus.textContent = result.error || "Your message could not be recorded. Please try again.";
+            const formspreeError = result.errors?.map((error) => error.message).join(" ");
+            contactStatus.textContent = formspreeError || result.error || "Your message could not be recorded. Please try again.";
             contactStatus.className = "text-center text-lg mt-6 text-red-300";
             return;
           }
