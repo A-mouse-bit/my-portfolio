@@ -1,0 +1,4 @@
+# Plain static site: index.html lives at the repository root, so publish the root directory.
+# No build step is needed.
+[build]
+  publish = "."
